@@ -19,6 +19,7 @@ class AlbumentationsDataset:
         image, label = self.dataset[idx]
         image = np.array(image)
         if self.transform:
+            image = image.transpose(1, 2, 0)
             image = self.transform(image=image)["image"]
 
         label = torch.from_numpy(np.array(label))
@@ -30,7 +31,6 @@ class AlbumentationsDataset:
 def get_transforms(mean, std, p):
     train_transform = A.Compose(
         [
-            A.Normalize(mean, std),
             A.HorizontalFlip(p=p),
             A.ShiftScaleRotate(p=p),
             A.CoarseDropout(max_holes = 1,
@@ -42,7 +42,8 @@ def get_transforms(mean, std, p):
                             fill_value=(mean),
                             mask_fill_value = None,
                             p=p
-            )
+            ),
+            A.Normalize(mean, std)
         ]
     )
 
