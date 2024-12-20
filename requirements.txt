@@ -3,3 +3,4 @@ torchvision
 albumentations
 numpy
 tqdm
+torchsummary

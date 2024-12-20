@@ -5,7 +5,7 @@ from tqdm import tqdm
 from dataset import get_dataloaders
 from config import config as cfg
 from model import Net  # Assuming you name your model file `model.py` and class `Net`
-
+from torchsummary import summary
 
 def train_one_epoch(model, loader, criterion, optimizer, device, epoch, total_epochs):
     model.train()
@@ -69,7 +69,9 @@ def main():
         num_workers=cfg.num_workers
     )
 
-    model = Net().to(device)
+    model = Net(base_channels=16).to(device)
+    summary(model, input_size=(3, 32, 32))
+
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=cfg.learning_rate)
 
