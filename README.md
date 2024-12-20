@@ -123,7 +123,7 @@ Estimated Total Size (MB): 4.49
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/s8erav3.git
+   git clone https://github.com/piygr/s8erav3.git
    cd s8erav3
    ```
 
