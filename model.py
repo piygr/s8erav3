@@ -40,27 +40,28 @@ class Block(nn.Module):
         Depending on the model requirement, Convolution block with number of layers is applied to the input image
         '''
 
-        def __call__(self, x, layers=2):
+    def __call__(self, x, layers=2):
 
-            x = self.conv1(x)
-            x = self.n1(x)
+        x = self.conv1(x)
+        x = self.n1(x)
+        x = F.relu(x)
+        x = self.drop1(x)
+
+        if layers >= 2:
+            x = self.conv2(x)
+
+            x = self.n2(x)
             x = F.relu(x)
-            x = self.drop1(x)
+            x = self.drop2(x)
 
-            if layers >= 2:
-                x = self.conv2(x)
+        if layers == 3:
+            x = self.conv3(x)
+            x = self.n3(x)
+            x = F.relu(x)
+            x = self.drop3(x)
 
-                x = self.n2(x)
-                x = F.relu(x)
-                x = self.drop2(x)
+        return x
 
-            if layers == 3:
-                x = self.conv3(x)
-                x = self.n3(x)
-                x = F.relu(x)
-                x = self.drop3(x)
-
-            return x
 
 class Net(nn.Module):
     def __init__(self, base_channels, drop=0.01):
