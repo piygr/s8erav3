@@ -28,7 +28,7 @@ def train_one_epoch(model, loader, criterion, optimizer, device, epoch, total_ep
         total += target.size(0)
 
         progress_bar.set_postfix(
-            loss=f"{running_loss / total:.4f}", accuracy=f"{correct / total:.4f}"
+            loss=f"{running_loss / total:.4f}", accuracy=f"{100*correct / total:.4f}"
         )
 
     return running_loss / total, correct / total
@@ -53,7 +53,7 @@ def validate_one_epoch(model, loader, criterion, device, epoch, total_epochs):
             total += target.size(0)
 
             progress_bar.set_postfix(
-                loss=f"{running_loss / total:.4f}", accuracy=f"{correct / total:.4f}"
+                loss=f"{running_loss / total:.4f}", accuracy=f"{100*correct / total:.4f}"
             )
 
     return running_loss / total, correct / total
@@ -82,8 +82,8 @@ def main():
         valid_loss, valid_acc = validate_one_epoch(model, test_loader, criterion, device, epoch, cfg.epochs)
 
         print(f"\nEpoch {epoch+1}/{cfg.epochs} Summary:")
-        print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f}")
-        print(f"Valid Loss: {valid_loss:.4f}, Valid Acc: {valid_acc:.4f}")
+        print(f"Train Loss: {train_loss:.4f}, Train Acc: {100*train_acc:.4f}")
+        print(f"Valid Loss: {valid_loss:.4f}, Valid Acc: {100*valid_acc:.4f}")
 
         scheduler.step(valid_acc)
 
