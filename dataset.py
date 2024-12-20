@@ -24,12 +24,12 @@ class AlbumentationsDataset:
 
 def get_transforms(mean, std, p):
     train_transform = A.Compose([
+        A.Normalize(mean=mean, std=std),
         A.HorizontalFlip(p=p),
         A.ShiftScaleRotate(shift_limit=0.0625, scale_limit=0.1, rotate_limit=15),
         A.CoarseDropout(max_holes=1, max_height=16, max_width=16,
                         min_holes=1, min_height=16, min_width=16,
-                        fill_value=mean, mask_fill_value=None, p=p),
-        A.Normalize(mean=mean, std=std),
+                        fill_value=(mean), mask_fill_value=None, p=p),
         ToTensorV2(),
     ])
 
