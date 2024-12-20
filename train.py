@@ -73,7 +73,9 @@ def main():
     summary(model, input_size=(3, 32, 32))
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=cfg.learning_rate)
+    optimizer = optim.SGD(model.parameters(), lr=cfg.learning_rate, momentum=0.9)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=1, threshold=0.001,
+                                                     threshold_mode='abs', eps=0.001, verbose=True)
 
     for epoch in range(cfg.epochs):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device, epoch, cfg.epochs)
@@ -82,6 +84,8 @@ def main():
         print(f"\nEpoch {epoch+1}/{cfg.epochs} Summary:")
         print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f}")
         print(f"Valid Loss: {valid_loss:.4f}, Valid Acc: {valid_acc:.4f}")
+
+        scheduler.step(valid_acc)
 
     torch.save(model.state_dict(), "model.pth")
     print("Training complete. Model saved to 'model.pth'.")
