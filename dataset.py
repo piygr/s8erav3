@@ -1,7 +1,7 @@
 import albumentations as A
-from albumentations.pytorch import ToTensorV2
+import torch
 import numpy as np
-from torchvision.datasets import CIFAR10
+from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from config import config as cfg
 from utils import calculate_mean_std
@@ -20,6 +20,10 @@ class AlbumentationsDataset:
         image = np.array(image)
         if self.transform:
             image = self.transform(image=image)["image"]
+
+        label = torch.from_numpy(np.array(label))
+        image = torch.from_numpy(image.transpose(2, 0, 1))
+
         return image, label
 
 
@@ -31,26 +35,24 @@ def get_transforms(mean, std, p):
         A.CoarseDropout(max_holes=1, max_height=16, max_width=16,
                         min_holes=1, min_height=16, min_width=16,
                         fill_value=(mean), mask_fill_value=None, p=p),
-        ToTensorV2(),
     ])
 
     test_transform = A.Compose([
-        A.Normalize(mean=mean, std=std),
-        ToTensorV2(),
+        A.Normalize(mean=mean, std=std)
     ])
 
     return train_transform, test_transform
 
 
 def get_dataloaders(batch_size=128, valid_split=0.1, shuffle=True, num_workers=4):
-    dataset = CIFAR10(root="./data", train=True, download=True)
+    dataset = datasets.CIFAR10(root="./data", train=True, download=True, transform=transforms.ToTensor())
 
     mean, std = calculate_mean_std(dataset)
 
     train_transform, test_transform = get_transforms(mean, std, cfg.transform_probability)
 
     train_dataset = AlbumentationsDataset(dataset, transform=train_transform)
-    test_dataset = CIFAR10(root="./data", train=False, download=True, transform=None)
+    test_dataset = datasets.CIFAR10(root="./data", train=False, download=True, transform=transforms.ToTensor())
     test_dataset = AlbumentationsDataset(test_dataset, transform=test_transform)
 
     '''indices = np.arange(len(train_dataset))
