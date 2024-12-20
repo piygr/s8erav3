@@ -4,6 +4,7 @@ import numpy as np
 from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
 from config import config as cfg
+from utils import calculate_mean_std
 
 
 class AlbumentationsDataset:
@@ -43,8 +44,8 @@ def get_transforms(mean, std, p):
 
 def get_dataloaders(batch_size=128, valid_split=0.1, shuffle=True, num_workers=4):
     dataset = CIFAR10(root="./data", train=True, download=True)
-    mean = np.array(dataset.data / 255.0).mean(axis=(0, 1, 2))
-    std = np.array(dataset.data / 255.0).std(axis=(0, 1, 2))
+
+    mean, std = calculate_mean_std(dataset.data)
 
     train_transform, test_transform = get_transforms(mean, std, cfg.transform_probability)
 
