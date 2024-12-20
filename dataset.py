@@ -45,7 +45,7 @@ def get_transforms(mean, std, p):
 def get_dataloaders(batch_size=128, valid_split=0.1, shuffle=True, num_workers=4):
     dataset = CIFAR10(root="./data", train=True, download=True)
 
-    mean, std = calculate_mean_std(dataset.data)
+    mean, std = calculate_mean_std(dataset)
 
     train_transform, test_transform = get_transforms(mean, std, cfg.transform_probability)
 
